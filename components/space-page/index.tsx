@@ -3,7 +3,7 @@
 import React from "react";
 import { trpc } from "@/lib/trpc-client";
 import { Calendar } from "@/components/ui/calendar";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+// import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -25,8 +25,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Slider } from "@/components/ui/slider";
-import { authClient } from "@/lib/auth-client";
+// import { Slider } from "@/components/ui/slider";
 
 interface SpacePageProps {
   orgSlug: string;
@@ -34,7 +33,6 @@ interface SpacePageProps {
 }
 
 export function SpacePage({ orgSlug, locationSlug }: SpacePageProps) {
-  const { data: session } = authClient.useSession();
   const { data: spaces } = trpc.getSpaces.useQuery(
     { orgSlug, locationSlug },
     {
@@ -44,46 +42,34 @@ export function SpacePage({ orgSlug, locationSlug }: SpacePageProps) {
 
   const [date, setDate] = React.useState<Date>(new Date());
   const [selectedSpace, setSelectedSpace] = React.useState<string | null>(null);
-  const [selectedTimeRange, setSelectedTimeRange] = React.useState<
-    [number, number]
-  >([540, 1020]); // 9:00 AM to 5:00 PM in minutes
+  // const [selectedTimeRange, setSelectedTimeRange] = React.useState<
+  //   [number, number]
+  // >([540, 1020]);
   const [showConfirmation, setShowConfirmation] = React.useState(false);
 
   const handleBooking = () => {
     setShowConfirmation(true);
   };
 
-  const formatTimeFromMinutes = (minutes: number) => {
-    const hours = Math.floor(minutes / 60);
-    const mins = minutes % 60;
-    return `${hours.toString().padStart(2, "0")}:${mins
-      .toString()
-      .padStart(2, "0")}`;
-  };
+  // const formatTimeFromMinutes = (minutes: number) => {
+  //   const hours = Math.floor(minutes / 60);
+  //   const mins = minutes % 60;
+  //   return `${hours.toString().padStart(2, "0")}:${mins
+  //     .toString()
+  //     .padStart(2, "0")}`;
+  // };
 
-  const formatTimeRange = (range: [number, number]) => {
-    return `${formatTimeFromMinutes(range[0])} - ${formatTimeFromMinutes(
-      range[1]
-    )}`;
-  };
+  // const formatTimeRange = (range: [number, number]) => {
+  //   return `${formatTimeFromMinutes(range[0])} - ${formatTimeFromMinutes(
+  //     range[1]
+  //   )}`;
+  // };
 
   if (!spaces) return null;
 
   return (
     <div className="flex h-screen bg-gray-100">
       <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="flex items-center justify-between px-6 py-4 bg-white border-b">
-          <h1 className="text-2xl font-bold text-gray-800">Spaces</h1>
-          <div className="flex items-center">
-            <span className="mr-4 text-sm text-gray-600">
-              {session?.user?.name}
-            </span>
-            <Avatar>
-              <AvatarImage src="/placeholder-user.jpg" alt="@johndoe" />
-              <AvatarFallback>JD</AvatarFallback>
-            </Avatar>
-          </div>
-        </header>
         <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">
           <div className="container mx-auto px-6 py-8">
             <div className="flex justify-between items-center mb-6">
@@ -189,7 +175,7 @@ export function SpacePage({ orgSlug, locationSlug }: SpacePageProps) {
               mode="single"
               selected={date}
               onSelect={(newDate) => newDate && setDate(newDate)}
-              className="rounded-md border"
+              className="rounded-md border w-full"
             />
           </div>
           {selectedSpace && (
@@ -203,7 +189,7 @@ export function SpacePage({ orgSlug, locationSlug }: SpacePageProps) {
               </p>
             </div>
           )}
-          <div className="mb-6">
+          {/* <div className="mb-6">
             <h3 className="font-semibold mb-2">Select Time Range</h3>
             <div className="mt-4">
               <Slider
@@ -224,12 +210,12 @@ export function SpacePage({ orgSlug, locationSlug }: SpacePageProps) {
             <p className="mt-2 text-sm text-gray-600">
               Selected time: {formatTimeRange(selectedTimeRange)}
             </p>
-          </div>
+          </div> */}
           <Button
             className="w-full"
             size="lg"
             onClick={handleBooking}
-            disabled={!selectedSpace || !selectedTimeRange}
+            disabled={!selectedSpace}
           >
             Confirm Booking
           </Button>
@@ -248,10 +234,10 @@ export function SpacePage({ orgSlug, locationSlug }: SpacePageProps) {
               <span className="font-semibold">Date:</span>{" "}
               {date.toLocaleDateString()}
             </p>
-            <p className="text-sm text-gray-500">
+            {/* <p className="text-sm text-gray-500">
               <span className="font-semibold">Time:</span>{" "}
               {formatTimeRange(selectedTimeRange)}
-            </p>
+            </p> */}
             <p className="text-sm text-gray-500">
               <span className="font-semibold">Space:</span>{" "}
               {spaces.find((s) => s.id === selectedSpace)?.name}
