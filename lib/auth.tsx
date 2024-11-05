@@ -7,8 +7,7 @@ import * as schema from "@/db/schema";
 import { organization } from "better-auth/plugins";
 import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
-import { resend } from "./email";
-import { OrgInviteEmail } from "@/components/emails/org-invite";
+import { createAsyncInternalCaller } from "@/trpc/routers/_internal";
 
 export const auth = betterAuth({
   baseURL: getBaseUrl(),
@@ -25,19 +24,8 @@ export const auth = betterAuth({
   plugins: [
     organization({
       async sendInvitationEmail(data) {
-        const inviteLink = `https://spaces.vercel.app/invitations/${data.id}`;
-
-        await resend.emails.send({
-          from: "Acme <onboarding@resend.dev>",
-          to: [data.email],
-          subject: `You're invited to join ${data.organization.name}`,
-          react: (
-            <OrgInviteEmail
-              orgName={data.organization.name}
-              inviteLink={inviteLink}
-            />
-          ),
-        });
+        const trpc = await createAsyncInternalCaller();
+        await trpc.sendInvitationEmail(data);
       },
     }),
   ],

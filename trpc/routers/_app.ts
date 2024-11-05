@@ -6,7 +6,8 @@ import { ensureUserIsMember } from "@/lib/auth";
 import { db } from "@/db";
 import * as authSchema from "../../auth-schema";
 import * as schema from "@/db/schema";
-import { eq, and } from "drizzle-orm";
+import { eq, and, gt } from "drizzle-orm";
+import { TRPCError } from "@trpc/server";
 
 export const appRouter = router({
   getLocations: authProcedure
@@ -70,6 +71,91 @@ export const appRouter = router({
         );
 
       return spaces;
+    }),
+
+  getInvitations: authProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+      })
+    )
+    .query(async ({ input: { userId }, ctx }) => {
+      // Verify user is accessing their own invitations
+      if (ctx.session.user.id !== userId) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You can only access your own invitations.",
+        });
+      }
+
+      const { email } = ctx.session.user;
+      // Fetch active invitations with organization and inviter details
+      const data = await db
+        .select({
+          id: authSchema.invitation.id,
+          role: authSchema.invitation.role,
+          expiresAt: authSchema.invitation.expiresAt,
+          inviterId: authSchema.invitation.inviterId,
+          inviterName: authSchema.user.name,
+          organizationId: authSchema.invitation.organizationId,
+          organizationName: authSchema.organization.name,
+        })
+        .from(authSchema.invitation)
+        .leftJoin(
+          authSchema.organization,
+          eq(authSchema.organization.id, authSchema.invitation.organizationId)
+        )
+        .leftJoin(
+          authSchema.user,
+          eq(authSchema.user.id, authSchema.invitation.inviterId)
+        )
+        .where(
+          and(
+            gt(authSchema.invitation.expiresAt, new Date()),
+            eq(authSchema.invitation.status, "pending"),
+            eq(authSchema.invitation.email, email)
+          )
+        );
+
+      return data;
+    }),
+
+  getInvitation: authProcedure
+    .input(
+      z.object({
+        invitationId: z.string(),
+      })
+    )
+    .query(async ({ input: { invitationId }, ctx }) => {
+      const { email } = ctx.session.user;
+      // Fetch invitation with organization and inviter details
+      const data = await db
+        .select({
+          id: authSchema.invitation.id,
+          role: authSchema.invitation.role,
+          expiresAt: authSchema.invitation.expiresAt,
+          inviterId: authSchema.invitation.inviterId,
+          inviterName: authSchema.user.name,
+          organizationId: authSchema.invitation.organizationId,
+          organizationName: authSchema.organization.name,
+        })
+        .from(authSchema.invitation)
+        .leftJoin(
+          authSchema.organization,
+          eq(authSchema.organization.id, authSchema.invitation.organizationId)
+        )
+        .leftJoin(
+          authSchema.user,
+          eq(authSchema.user.id, authSchema.invitation.inviterId)
+        )
+        .where(
+          and(
+            eq(authSchema.invitation.id, invitationId),
+            eq(authSchema.invitation.email, email)
+          )
+        );
+
+      return data[0];
     }),
 });
 
