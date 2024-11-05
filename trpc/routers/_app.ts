@@ -53,6 +53,10 @@ export const appRouter = router({
           type: schema.space.type,
           capacity: schema.space.capacity,
           isAvailable: schema.space.isAvailable,
+          x: schema.space.x,
+          y: schema.space.y,
+          width: schema.space.width,
+          height: schema.space.height,
         })
         .from(schema.space)
         .leftJoin(

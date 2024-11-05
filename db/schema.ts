@@ -4,6 +4,7 @@ import {
   integer,
   timestamp,
   boolean,
+  numeric,
 } from "drizzle-orm/pg-core";
 import { organization, user } from "../auth-schema";
 
@@ -30,6 +31,10 @@ export const space = pgTable("space", {
   type: text("type").notNull(), // e.g., 'desk', 'meeting_room'
   capacity: integer("capacity").notNull(),
   isAvailable: boolean("isAvailable").notNull().default(true),
+  x: numeric("x").notNull(),
+  y: numeric("y").notNull(),
+  width: numeric("width"),
+  height: numeric("height"),
   createdAt: timestamp("createdAt").notNull().defaultNow(),
   updatedAt: timestamp("updatedAt").notNull().defaultNow(),
 });

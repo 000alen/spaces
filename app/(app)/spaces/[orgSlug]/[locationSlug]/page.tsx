@@ -1,4 +1,4 @@
-import { SpaceBookingPage } from "@/components/space-booking-page";
+import { SpacePage } from "@/components/space-page";
 
 export default async function Page({
   params,
@@ -7,5 +7,5 @@ export default async function Page({
 }) {
   const { orgSlug, locationSlug } = await params;
 
-  return <SpaceBookingPage orgSlug={orgSlug} locationSlug={locationSlug} />;
+  return <SpacePage orgSlug={orgSlug} locationSlug={locationSlug} />;
 }
