@@ -14,6 +14,7 @@ export const location = pgTable("location", {
     .notNull()
     .references(() => organization.id),
   name: text("name").notNull(),
+  slug: text("slug").notNull(),
   address: text("address"),
   createdAt: timestamp("createdAt").notNull().defaultNow(),
   updatedAt: timestamp("updatedAt").notNull().defaultNow(),
