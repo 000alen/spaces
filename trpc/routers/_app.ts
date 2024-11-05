@@ -146,6 +146,8 @@ export const appRouter = router({
       const locationId = await getLocationIdFromSlug(orgSlug, locationSlug);
 
       return await db.insert(schema.space).values({
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         id: randomId(),
         locationId,
         name: space.name,
