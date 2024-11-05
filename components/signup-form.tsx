@@ -59,7 +59,7 @@ export function SignupForm({ className, ...props }: SignupFormProps) {
       },
       {
         onSuccess: () => {
-          router.push("/orgs");
+          router.push("/spaces");
         },
         onError: (ctx) => {
           alert(ctx.error.message);

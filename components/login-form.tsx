@@ -52,7 +52,7 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
       },
       {
         onSuccess: () => {
-          router.push("/orgs");
+          router.push("/spaces");
         },
         onError: (ctx) => {
           alert(ctx.error.message);
