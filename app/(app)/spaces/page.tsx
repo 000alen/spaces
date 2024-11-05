@@ -34,6 +34,11 @@ export default function Page() {
         <h2>Looking for your invitations?</h2>
         <Link href="/invitations">Go!</Link>
       </div>
+
+      <div>
+        <h2>Looking for your bookings?</h2>
+        <Link href="/bookings">Go!</Link>
+      </div>
     </div>
   );
 }

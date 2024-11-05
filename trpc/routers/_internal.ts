@@ -4,6 +4,7 @@ import { z } from "zod";
 import publicProcedure from "@/trpc/procedures/public";
 import { OrgInviteEmail } from "@/components/emails/org-invite";
 import { resend } from "@/lib/email";
+import { BookingEmail } from "@/components/emails/booking";
 
 export const internalRouter = router({
   sendInvitationEmail: publicProcedure
@@ -42,6 +43,26 @@ export const internalRouter = router({
           orgName: input.organization.name,
           inviteLink,
         }),
+      });
+    }),
+
+  sendBookingEmail: publicProcedure
+    .input(
+      z.object({
+        email: z.string().email(),
+        orgSlug: z.string(),
+        locationSlug: z.string(),
+        spaceId: z.string(),
+        startTime: z.date(),
+        endTime: z.date(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      await resend.emails.send({
+        from: "Acme <onboarding@resend.dev>",
+        to: [input.email],
+        subject: `Booking confirmation for ${input.orgSlug} at ${input.locationSlug}`,
+        react: BookingEmail(input),
       });
     }),
 });

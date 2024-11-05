@@ -1,4 +1,5 @@
 import OrgPage from "@/components/org-page";
+import { getOrgIdFromSlug } from "@/lib/auth";
 
 export default async function Page({
   params,
@@ -7,5 +8,7 @@ export default async function Page({
 }) {
   const { orgSlug } = await params;
 
-  return <OrgPage orgSlug={orgSlug} />;
+  const orgId = await getOrgIdFromSlug(orgSlug);
+
+  return <OrgPage orgId={orgId} orgSlug={orgSlug} />;
 }

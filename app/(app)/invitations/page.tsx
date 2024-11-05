@@ -2,16 +2,12 @@
 
 import { authClient } from "@/lib/auth-client";
 import { trpc } from "@/lib/trpc-client";
-import { skipToken } from "@tanstack/react-query";
 
 export default function Page() {
   const { data: session } = authClient.useSession();
-  const { data: invitations } = trpc.getInvitations.useQuery(
-    !!session ? { userId: session?.user?.id ?? "" } : skipToken,
-    {
-      placeholderData: [],
-    }
-  );
+  const { data: invitations } = trpc.getInvitations.useQuery(undefined, {
+    placeholderData: [],
+  });
 
   const accept = async (invitationId: string) => {
     await authClient.organization.acceptInvitation({
