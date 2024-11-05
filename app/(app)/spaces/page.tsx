@@ -1,5 +1,6 @@
 "use client";
 
+import { NewOrgButton } from "@/components/new-org-button";
 import { authClient } from "@/lib/auth-client";
 import Link from "next/link";
 
@@ -15,6 +16,8 @@ export default function Page() {
 
       <div>
         <h2>Organizations</h2>
+
+        <NewOrgButton />
 
         <ul>
           {organizations?.map((organization) => (

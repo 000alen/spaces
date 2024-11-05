@@ -2,12 +2,13 @@ import { createCallerFactory, router } from "@/trpc/trpc";
 import { createContext } from "@/trpc/context";
 import authProcedure from "@/trpc/procedures/auth";
 import { z } from "zod";
-import { ensureUserIsMember } from "@/lib/auth";
+import { ensureUserIsMember, getOrgIdFromSlug } from "@/lib/auth";
 import { db } from "@/db";
 import * as authSchema from "../../auth-schema";
 import * as schema from "@/db/schema";
 import { eq, and, gt } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
+import { randomId } from "@/lib/utils";
 
 export const appRouter = router({
   getLocations: authProcedure
@@ -34,6 +35,31 @@ export const appRouter = router({
         .where(eq(authSchema.organization.slug, orgSlug));
 
       return locations;
+    }),
+
+  createLocation: authProcedure
+    .input(
+      z.object({
+        orgSlug: z.string(),
+        location: z.object({
+          name: z.string(),
+          slug: z.string(),
+          address: z.string(),
+        }),
+      })
+    )
+    .mutation(async ({ ctx, input: { orgSlug, location } }) => {
+      await ensureUserIsMember(ctx.session.user.id, orgSlug);
+
+      const orgId = await getOrgIdFromSlug(orgSlug);
+
+      return await db.insert(schema.location).values({
+        id: randomId(),
+        name: location.name,
+        slug: location.slug,
+        address: location.address,
+        organizationId: orgId,
+      });
     }),
 
   getSpaces: authProcedure
@@ -132,7 +158,6 @@ export const appRouter = router({
     )
     .query(async ({ input: { invitationId }, ctx }) => {
       const { email } = ctx.session.user;
-      // Fetch invitation with organization and inviter details
       const data = await db
         .select({
           id: authSchema.invitation.id,

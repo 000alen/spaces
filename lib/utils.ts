@@ -27,6 +27,10 @@ export function slugify(input: string): string {
   return normalized;
 }
 
+export function randomId() {
+  return Math.random().toString(36).slice(2);
+}
+
 export function getBaseUrl() {
   const isDev = process.env.NODE_ENV === "development";
   const url =

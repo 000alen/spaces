@@ -60,3 +60,13 @@ export const ensureUserIsMember = async (userId: string, orgSlug: string) => {
     });
   }
 };
+
+export const getOrgIdFromSlug = async (orgSlug: string) => {
+  const org = await db
+    .select({ id: authSchema.organization.id })
+    .from(authSchema.organization)
+    .where(eq(authSchema.organization.slug, orgSlug))
+    .limit(1);
+
+  return org[0]?.id;
+};
