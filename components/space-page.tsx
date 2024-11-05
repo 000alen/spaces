@@ -26,6 +26,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Slider } from "@/components/ui/slider";
+import { authClient } from "@/lib/auth-client";
 
 interface SpacePageProps {
   orgSlug: string;
@@ -33,6 +34,7 @@ interface SpacePageProps {
 }
 
 export function SpacePage({ orgSlug, locationSlug }: SpacePageProps) {
+  const { data: session } = authClient.useSession();
   const { data: spaces } = trpc.getSpaces.useQuery(
     { orgSlug, locationSlug },
     {
@@ -71,9 +73,11 @@ export function SpacePage({ orgSlug, locationSlug }: SpacePageProps) {
     <div className="flex h-screen bg-gray-100">
       <div className="flex-1 flex flex-col overflow-hidden">
         <header className="flex items-center justify-between px-6 py-4 bg-white border-b">
-          <h1 className="text-2xl font-bold text-gray-800">SpaceShare</h1>
+          <h1 className="text-2xl font-bold text-gray-800">Spaces</h1>
           <div className="flex items-center">
-            <span className="mr-4 text-sm text-gray-600">John Doe</span>
+            <span className="mr-4 text-sm text-gray-600">
+              {session.user.name}
+            </span>
             <Avatar>
               <AvatarImage src="/placeholder-user.jpg" alt="@johndoe" />
               <AvatarFallback>JD</AvatarFallback>
