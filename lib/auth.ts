@@ -4,6 +4,7 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 // import * as schema from "@/db/schema";
 import * as authSchema from "../auth-schema";
+import { organization } from "better-auth/plugins";
 
 export const auth = betterAuth({
   baseURL: getBaseUrl(),
@@ -17,4 +18,5 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
+  plugins: [organization()],
 });
