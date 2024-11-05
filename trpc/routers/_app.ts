@@ -10,6 +10,26 @@ import { eq, and, gt } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { randomId } from "@/lib/utils";
 
+const getLocationIdFromSlug = async (orgSlug: string, locationSlug: string) => {
+  const location = await db
+    .select({
+      id: schema.location.id,
+    })
+    .from(schema.location)
+    .leftJoin(
+      authSchema.organization,
+      eq(authSchema.organization.id, schema.location.organizationId)
+    )
+    .where(
+      and(
+        eq(authSchema.organization.slug, orgSlug),
+        eq(schema.location.slug, locationSlug)
+      )
+    );
+
+  return location[0].id;
+};
+
 export const appRouter = router({
   getLocations: authProcedure
     .input(
@@ -101,6 +121,42 @@ export const appRouter = router({
         );
 
       return spaces;
+    }),
+
+  createSpace: authProcedure
+    .input(
+      z.object({
+        orgSlug: z.string(),
+        locationSlug: z.string(),
+        space: z.object({
+          name: z.string(),
+          type: z.string(),
+          capacity: z.number(),
+          isAvailable: z.boolean(),
+          x: z.number(),
+          y: z.number(),
+          width: z.number().optional(),
+          height: z.number().optional(),
+        }),
+      })
+    )
+    .mutation(async ({ ctx, input: { orgSlug, locationSlug, space } }) => {
+      await ensureUserIsMember(ctx.session.user.id, orgSlug);
+
+      const locationId = await getLocationIdFromSlug(orgSlug, locationSlug);
+
+      return await db.insert(schema.space).values({
+        id: randomId(),
+        locationId,
+        name: space.name,
+        type: space.type,
+        capacity: space.capacity,
+        isAvailable: space.isAvailable,
+        x: space.x,
+        y: space.y,
+        // width: space.width,
+        // height: space.height,
+      });
     }),
 
   getInvitations: authProcedure

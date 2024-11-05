@@ -76,7 +76,7 @@ export function SpacePage({ orgSlug, locationSlug }: SpacePageProps) {
           <h1 className="text-2xl font-bold text-gray-800">Spaces</h1>
           <div className="flex items-center">
             <span className="mr-4 text-sm text-gray-600">
-              {session.user.name}
+              {session?.user?.name}
             </span>
             <Avatar>
               <AvatarImage src="/placeholder-user.jpg" alt="@johndoe" />

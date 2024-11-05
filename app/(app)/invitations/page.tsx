@@ -7,7 +7,7 @@ import { skipToken } from "@tanstack/react-query";
 export default function Page() {
   const { data: session } = authClient.useSession();
   const { data: invitations } = trpc.getInvitations.useQuery(
-    !!session ? { userId: session?.user.id ?? "" } : skipToken,
+    !!session ? { userId: session?.user?.id ?? "" } : skipToken,
     {
       placeholderData: [],
     }
