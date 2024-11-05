@@ -1,51 +1,62 @@
-'use client'
+"use client";
 
-import React from 'react'
-import { Calendar } from "@/components/ui/calendar"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
+import React from "react";
+import { Calendar } from "@/components/ui/calendar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
-import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Clock, MapPin, Users } from "lucide-react"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import { Slider } from "@/components/ui/slider"
+} from "@/components/ui/dialog";
+import {
+  Calendar as CalendarIcon,
+  ChevronLeft,
+  ChevronRight,
+  Users,
+} from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Slider } from "@/components/ui/slider";
+import { SPACES } from "@/lib/mock-data";
+import { Space } from "@/lib/types";
 
-export function SpaceBooking() {
-  const [date, setDate] = React.useState<Date>(new Date())
-  const [selectedSpace, setSelectedSpace] = React.useState<number | null>(null)
-  const [selectedTimeRange, setSelectedTimeRange] = React.useState<[number, number]>([540, 1020]) // 9:00 AM to 5:00 PM in minutes
-  const [showConfirmation, setShowConfirmation] = React.useState(false)
+interface SpaceBookingPageProps {
+  spaces?: Space[];
+}
 
-  const spaces = [
-    { id: 1, name: "Desk A1", type: "Standing Desk", capacity: 1, x: 10, y: 10 },
-    { id: 2, name: "Desk A2", type: "Regular Desk", capacity: 1, x: 10, y: 30 },
-    { id: 3, name: "Desk A3", type: "Regular Desk", capacity: 1, x: 10, y: 50 },
-    { id: 4, name: "Desk B1", type: "Standing Desk", capacity: 1, x: 30, y: 10 },
-    { id: 5, name: "Desk B2", type: "Regular Desk", capacity: 1, x: 30, y: 30 },
-    { id: 6, name: "Desk B3", type: "Regular Desk", capacity: 1, x: 30, y: 50 },
-    { id: 7, name: "Meeting Room 1", type: "Conference Room", capacity: 6, x: 60, y: 10, width: 30, height: 20 },
-    { id: 8, name: "Meeting Room 2", type: "Conference Room", capacity: 4, x: 60, y: 40, width: 30, height: 20 },
-  ]
+export function SpaceBookingPage({ spaces = SPACES }: SpaceBookingPageProps) {
+  const [date, setDate] = React.useState<Date>(new Date());
+  const [selectedSpace, setSelectedSpace] = React.useState<number | null>(null);
+  const [selectedTimeRange, setSelectedTimeRange] = React.useState<
+    [number, number]
+  >([540, 1020]); // 9:00 AM to 5:00 PM in minutes
+  const [showConfirmation, setShowConfirmation] = React.useState(false);
 
   const handleBooking = () => {
-    setShowConfirmation(true)
-  }
+    setShowConfirmation(true);
+  };
 
   const formatTimeFromMinutes = (minutes: number) => {
-    const hours = Math.floor(minutes / 60)
-    const mins = minutes % 60
-    return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`
-  }
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return `${hours.toString().padStart(2, "0")}:${mins
+      .toString()
+      .padStart(2, "0")}`;
+  };
 
   const formatTimeRange = (range: [number, number]) => {
-    return `${formatTimeFromMinutes(range[0])} - ${formatTimeFromMinutes(range[1])}`
-  }
+    return `${formatTimeFromMinutes(range[0])} - ${formatTimeFromMinutes(
+      range[1]
+    )}`;
+  };
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -63,18 +74,36 @@ export function SpaceBooking() {
         <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">
           <div className="container mx-auto px-6 py-8">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-3xl font-bold text-gray-800">Book a Workspace</h2>
+              <h2 className="text-3xl font-bold text-gray-800">
+                Book a Workspace
+              </h2>
               <div className="flex items-center space-x-2">
-                <Button variant="outline" size="icon" onClick={() => setDate(new Date(date.setDate(date.getDate() - 1)))}>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() =>
+                    setDate(new Date(date.setDate(date.getDate() - 1)))
+                  }
+                >
                   <ChevronLeft className="h-4 w-4" />
                 </Button>
                 <div className="flex items-center rounded-lg bg-white px-3 py-2">
                   <CalendarIcon className="mr-2 h-4 w-4 opacity-50" />
                   <span className="text-sm font-medium">
-                    {date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                    {date.toLocaleDateString("en-US", {
+                      month: "long",
+                      day: "numeric",
+                      year: "numeric",
+                    })}
                   </span>
                 </div>
-                <Button variant="outline" size="icon" onClick={() => setDate(new Date(date.setDate(date.getDate() + 1)))}>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() =>
+                    setDate(new Date(date.setDate(date.getDate() + 1)))
+                  }
+                >
                   <ChevronRight className="h-4 w-4" />
                 </Button>
               </div>
@@ -88,17 +117,21 @@ export function SpaceBooking() {
                       <TooltipTrigger>
                         <div
                           className={`absolute rounded-md border-2 ${
-                            selectedSpace === space.id ? 'border-blue-500 bg-blue-100' : 'border-gray-300 bg-gray-50'
+                            selectedSpace === space.id
+                              ? "border-blue-500 bg-blue-100"
+                              : "border-gray-300 bg-gray-50"
                           } cursor-pointer transition-all hover:bg-gray-100`}
                           style={{
                             left: `${space.x}%`,
                             top: `${space.y}%`,
-                            width: space.width ? `${space.width}%` : '10%',
-                            height: space.height ? `${space.height}%` : '10%',
+                            width: space.width ? `${space.width}%` : "10%",
+                            height: space.height ? `${space.height}%` : "10%",
                           }}
                           onClick={() => setSelectedSpace(space.id)}
                         >
-                          <span className="text-xs font-medium">{space.name}</span>
+                          <span className="text-xs font-medium">
+                            {space.name}
+                          </span>
                         </div>
                       </TooltipTrigger>
                       <TooltipContent>
@@ -117,7 +150,7 @@ export function SpaceBooking() {
                 <Card
                   key={space.id}
                   className={`cursor-pointer transition-all ${
-                    selectedSpace === space.id ? 'ring-2 ring-blue-500' : ''
+                    selectedSpace === space.id ? "ring-2 ring-blue-500" : ""
                   }`}
                   onClick={() => setSelectedSpace(space.id)}
                 >
@@ -149,8 +182,12 @@ export function SpaceBooking() {
           {selectedSpace && (
             <div className="mb-6">
               <h3 className="font-semibold mb-2">Selected Space</h3>
-              <p className="text-gray-600">{spaces.find(s => s.id === selectedSpace)?.name}</p>
-              <p className="text-gray-600">{spaces.find(s => s.id === selectedSpace)?.type}</p>
+              <p className="text-gray-600">
+                {spaces.find((s) => s.id === selectedSpace)?.name}
+              </p>
+              <p className="text-gray-600">
+                {spaces.find((s) => s.id === selectedSpace)?.type}
+              </p>
             </div>
           )}
           <div className="mb-6">
@@ -161,7 +198,9 @@ export function SpaceBooking() {
                 max={1140}
                 step={15}
                 value={selectedTimeRange}
-                onValueChange={(newRange) => setSelectedTimeRange(newRange as [number, number])}
+                onValueChange={(newRange) =>
+                  setSelectedTimeRange(newRange as [number, number])
+                }
                 className="mt-6"
               />
               <div className="flex justify-between text-sm text-gray-500 mt-2">
@@ -173,10 +212,10 @@ export function SpaceBooking() {
               Selected time: {formatTimeRange(selectedTimeRange)}
             </p>
           </div>
-          <Button 
-            className="w-full" 
-            size="lg" 
-            onClick={handleBooking} 
+          <Button
+            className="w-full"
+            size="lg"
+            onClick={handleBooking}
             disabled={!selectedSpace || !selectedTimeRange}
           >
             Confirm Booking
@@ -193,13 +232,16 @@ export function SpaceBooking() {
           </DialogHeader>
           <div className="mt-4">
             <p className="text-sm text-gray-500">
-              <span className="font-semibold">Date:</span> {date.toLocaleDateString()}
+              <span className="font-semibold">Date:</span>{" "}
+              {date.toLocaleDateString()}
             </p>
             <p className="text-sm text-gray-500">
-              <span className="font-semibold">Time:</span> {formatTimeRange(selectedTimeRange)}
+              <span className="font-semibold">Time:</span>{" "}
+              {formatTimeRange(selectedTimeRange)}
             </p>
             <p className="text-sm text-gray-500">
-              <span className="font-semibold">Space:</span> {spaces.find(s => s.id === selectedSpace)?.name}
+              <span className="font-semibold">Space:</span>{" "}
+              {spaces.find((s) => s.id === selectedSpace)?.name}
             </p>
           </div>
           <Button className="mt-4" onClick={() => setShowConfirmation(false)}>
@@ -208,5 +250,5 @@ export function SpaceBooking() {
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }
