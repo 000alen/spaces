@@ -12,7 +12,7 @@ export const LocationManagePage: React.FC<LocationManagePageProps> = ({
   locationSlug,
 }) => {
   return (
-    <div>
+    <div className="w-full h-screen flex flex-col justify-center">
       <NewSpaceForm orgSlug={orgSlug} locationSlug={locationSlug} />
     </div>
   );
